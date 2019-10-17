@@ -36,9 +36,28 @@ def main(argv):
     firstAccount = output["accounts"][0]["name"]
 
     # Get the list of locations for the first account in the list
-    print("List of Locations for Account " + firstAccount)
+   
     locationsList = service.accounts().locations().list(parent=firstAccount).execute()
-    print(json.dumps(locationsList, indent=2))
+    locationName = locationsList['locations'][0]['name']
+
+
+    # request last day
+    date_start = '2019-10-09T05:00:00Z'
+    date_end = '2019-10-10T23:00:01Z'
+    requestBody = {
+      "locationNames":[locationName],
+      "basicRequest": {
+        "metricRequests": {
+            "metric": "ALL"
+        },
+        "timeRange": {
+          "startTime": date_start,
+          "endTime": date_end
+        }
+      }
+    }
+    locationinsightReport = service.accounts().locations().reportInsights(name=firstAccount, body=requestBody).execute()
+    print(json.dumps(locationinsightReport, indent=2)[0:1650])
 
 if __name__ == "__main__":
   main(sys.argv)
